@@ -1,0 +1,33 @@
+# Fichiers et dossiers Python à ignorer
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.cache
+*.log
+
+# Environnements virtuels (exclure si utilisé)
+venv/
+env/
+*.venv
+*.env
+
+# Clés API et variables d'environnement
+.env
+*.env
+
+# Dépendances générées
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Configuration de l'éditeur (VS Code, PyCharm, etc.)
+.vscode/
+.idea/
+*.iml
+
+# Fichiers temporaires et caches
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
