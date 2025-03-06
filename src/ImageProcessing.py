@@ -1,6 +1,8 @@
 import openai
 import json
 import os
+import re
+import json
 from dotenv import load_dotenv
 
 # Charger les variables d'environnement
@@ -18,6 +20,7 @@ client = openai.OpenAI(api_key=OPENAI_API_KEY)
 model = "gpt-4o-mini"
 
 def analyze_plant_health(image_base64):
+    print("test")
     """
     Analyse une image de plante avec GPT-4o et retourne un diagnostic structuré.
     """
@@ -40,11 +43,23 @@ def analyze_plant_health(image_base64):
         if not response.choices:
             return {"error": "Erreur API OpenAI", "details": "Réponse vide d'OpenAI"}, 500
 
-        # Convertir la réponse en JSON
-        try:
-            plant_data = json.loads(response.choices[0].message.content.strip())
-        except Exception as e:
-            return {"error": "Erreur de parsing de la réponse OpenAI", "details": str(e)}, 500
+        # Initialiser json_match à None pour éviter les erreurs si la regex échoue
+        json_match = None  
+
+        # Récupérer la réponse textuelle de OpenAI
+        response_text = response.choices[0].message.content.strip()
+
+        # Rechercher uniquement la partie JSON dans la réponse OpenAI
+        json_match = re.search(r"\{.*\}", response_text, re.DOTALL)
+
+        if json_match:
+            try:
+                plant_data = json.loads(json_match.group(0))  # Convertir uniquement le JSON extrait
+            except json.JSONDecodeError as e:
+                return {"error": "Erreur de parsing de la réponse OpenAI", "details": str(e)}, 500
+        else:
+            return {"error": "Réponse OpenAI invalide", "details": "Aucun JSON détecté"}, 500
+
 
         # Vérification des valeurs renvoyées
         if "isPlant" not in plant_data:

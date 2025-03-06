@@ -3,6 +3,10 @@ import os
 from jinja2 import Environment, FileSystemLoader
 from src.ImageProcessing import analyze_plant_health  
 
+import re
+
+
+
 # Initialisation de Flask
 app = Flask(__name__)
 
@@ -56,7 +60,16 @@ def analyze():
                 solution=response["solution"]
             )
 
-        # Retourner la réponse JSON avec le HTML généré
+        # Nettoyer le HTML pour PowerApps
+
+            # Remplace les guillemets " par des apostrophes '
+        html_result = html_result.replace('"', "'")
+        
+            # Supprime les retours à la ligne et les backslashes
+        html_result = re.sub(r'\\n', '', html_result)  # Supprime \n
+        html_result = re.sub(r'\\', '', html_result)   # Supprime \
+
+        # Retourner la réponse JSON avec le HTML nettoyé
         return jsonify({
             "HtmlResult": html_result,
             "isPlant": response["isPlant"]
@@ -64,6 +77,8 @@ def analyze():
 
     except Exception as e:
         return jsonify({"error": "Erreur interne", "details": str(e)}), 500
+
+    
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)

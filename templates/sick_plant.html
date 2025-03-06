@@ -4,14 +4,17 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Analyse de la Plante</title>
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-        text-align: center;
-        margin: 40px;
-        background-color: #fff0e6;
-      }
-      .container {
+  </head>
+  <body
+    style="
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 40px;
+      background-color: #fff0e6;
+    "
+  >
+    <div
+      style="
         max-width: 600px;
         margin: auto;
         padding: 20px;
@@ -19,36 +22,26 @@
         box-shadow: 0px 0px 10px #ccc;
         background: white;
         color: #ff8000;
-      }
-      .badge {
-        font-size: 18px;
-        padding: 10px 20px;
-        border-radius: 5px;
-        color: white;
-      }
-      .sick {
-        background-color: #ff9800;
-      }
-      .very-sick {
-        background-color: #d9534f;
-      }
-      .section {
-        text-align: left;
-        margin-top: 20px;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="container">
-      <h2>Analyse de la Plante</h2>
-      <span class="badge {badgeColor}">État : {status}</span>
-      <div class="section">
-        <h4>Diagnostic :</h4>
-        <p>{diag}</p>
+      "
+    >
+      <h2 style="color: #ff8000">Analyse de la Plante</h2>
+      <span
+        style="
+          font-size: 18px;
+          padding: 10px 20px;
+          border-radius: 5px;
+          color: white;
+          background-color: '{{badgeColor}}';
+        "
+        >État : {{ status }}</span
+      >
+      <div style="text-align: left; margin-top: 20px">
+        <h4 style="color: #ff8000">Diagnostic :</h4>
+        <p>{{ diag }}</p>
       </div>
-      <div class="section">
-        <h4>Solution :</h4>
-        <p>{solution}</p>
+      <div style="text-align: left; margin-top: 20px">
+        <h4 style="color: #ff8000">Solution :</h4>
+        <p>{{ solution }}</p>
       </div>
     </div>
   </body>
