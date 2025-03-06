@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify
 import os
 from jinja2 import Environment, FileSystemLoader
-from ImageProcessing import analyze_plant_health  # Import de la fonction d'analyse
+from src.ImageProcessing import analyze_plant_health  # Import de la fonction d'analyse
 
 # Initialisation de Flask
 app = Flask(__name__)
