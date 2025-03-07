@@ -1,8 +1,8 @@
 from flask import Flask, request, jsonify
-import os
 from jinja2 import Environment, FileSystemLoader
 from src.ImageProcessing import analyze_plant_health  
-
+from flask import Flask, render_template
+import os
 import re
 
 
@@ -67,18 +67,30 @@ def analyze():
         
             # Supprime les retours à la ligne et les backslashes
         html_result = re.sub(r'\\n', '', html_result)  # Supprime \n
-        html_result = re.sub(r'\\', '', html_result)   # Supprime \
+        html_result = re.sub(r'\\', '', html_result)   # Supprime \ 
 
         # Retourner la réponse JSON avec le HTML nettoyé
         return jsonify({
             "HtmlResult": html_result,
-            "isPlant": response["isPlant"]
+            "isPlant": str(response["isPlant"])
         }), 200
 
     except Exception as e:
         return jsonify({"error": "Erreur interne", "details": str(e)}), 500
 
-    
+
+
+@app.route('/render', methods=['POST'])  # Changement d'URL pour plus de clarté
+def render_template_from_request():
+    """ Rend une template HTML en fonction de la requête POST """
+    data = request.json  # Récupération des données envoyées en JSON
+    template_name = data.get("template", "error_not_plant.html")  # Valeur par défaut
+    context = data.get("context", {})  # Dictionnaire contenant des variables pour la template
+
+    try:
+        return render_template(template_name, **context)
+    except:
+        return "Template not found", 404
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
