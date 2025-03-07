@@ -27,17 +27,36 @@ def analyze_plant_health(image_base64):
     try:
         # Envoyer la requête à OpenAI pour obtenir le diagnostic
         response = client.chat.completions.create(
-            model=model,
-            messages=[
-                {"role": "system", "content": "Vous êtes un expert en botanique. Fournissez UNIQUEMENT un JSON structuré sous ce format : { 'status': 'good health' | 'sick' | 'very sick' | '', 'diag': 'Explication...', 'solution': 'Solution...', 'isPlant': 1 ou 0 }. PAS DE TEXTE SUPPLÉMENTAIRE."},
-                {"role": "user", "content": [
+        model=model,
+        messages=[
+            {
+                "role": "system",
+                "content": (
+                    "Vous êtes un expert en botanique."
+                    "\n"
+                    "Critères d'analyse :\n"
+                    "- Si l'image ne représente pas une plante : 'status' = '', 'diag' = 'Cette image ne contient pas une plante.','solution' = '', 'isPlant' = 0\n"
+                    "- Si la plante est en bonne santé : 'status' = 'Bonne santé', 'diag' = 'Explication de son bon état', 'solution' = 'Conseils d’entretien pour garder ou améliorer la qualité ', 'isPlant' = 1\n"
+                    "- Si la plante est malade : 'status' = 'Malade' ou 'Très malade', 'diag' = 'Explication très détaillée de l’état de la plante avec symptômes observés et causes possibles', 'solution' = 'Explication détaillée des actions à prendre pour chaque cause potentielle','isPlant' = 1\n"
+                    "Fournissez UNIQUEMENT un JSON structuré sous ce format : "
+                    "{ 'status': 'Bonne santé' | 'Malade' | 'Très malade' | '', "
+                    "'diag': 'Explication détaillée...', "
+                    "'solution': 'Solution détaillée...', "
+                    "'isPlant': 1 ou 0 }. "
+                    "Aucun texte supplémentaire n'est autorisé."
+                ),
+            },
+            {
+                "role": "user",
+                "content": [
                     {"type": "text", "text": "Voici une photo d'une plante. Fournissez un diagnostic structuré au format JSON."},
                     {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{image_base64}"}}
-                ]},
-            ],
-            temperature=0.3,
-            max_tokens=300
-        )
+                ],
+            },
+        ],
+        temperature=0.3,
+        max_tokens=1500  # Ajusté pour permettre un diagnostic et une solution détaillés
+    )
 
         # Vérifier si la réponse OpenAI contient des choix
         if not response.choices:
