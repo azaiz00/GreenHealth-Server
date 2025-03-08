@@ -47,12 +47,17 @@ def analyze():
         if response["isPlant"] == 0:
             template = env.get_template("error_not_plant.html")
             html_result = template.render()
-        elif response["status"] == "good health":
+           
+        elif response["status"] == "Bonne santé":
             template = env.get_template("healthy_plant.html")
-            html_result = template.render(diag=response["diag"])
+            html_result = template.render(
+                diag=response["diag"],
+                status=response["status"],
+                diag=response["diag"],
+                Recommandations=response["solution"])
         else:
             template = env.get_template("sick_plant.html")
-            badge_color = "sick" if response["status"] == "sick" else "very-sick"
+            badge_color = "Malade" if response["status"] == "Malade" else "Très malade"
             html_result = template.render(
                 badgeColor=badge_color,
                 status=response["status"],
