@@ -51,7 +51,6 @@ def analyze():
         elif response["status"] == "Bonne santé":
             template = env.get_template("healthy_plant.html")
             html_result = template.render(
-                diag=response["diag"],
                 status=response["status"],
                 diag=response["diag"],
                 Recommandations=response["solution"])
