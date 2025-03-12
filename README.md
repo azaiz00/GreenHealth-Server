@@ -6,7 +6,9 @@
 
 **GreenHealth-Server** est une API Flask qui analyse les images de plantes envoyées sous forme **Base64** (depuis Power Automate ou toute autre source).  
 Elle utilise **OpenAI (GPT-4o)** pour identifier si la plante est en bonne santé, malade, ou si l'image ne contient pas de plante.  
-Le résultat est retourné sous forme **HTML + JSON**, prêt à être utilisé dans Power Platform ( ou autre ).
+Le résultat est retourné sous deux formats :
+- **HTML intégré dans un JSON** (pour un rendu direct dans PowerApps ou des applications web).
+- **JSON structuré** (pour une intégration directe dans des pipelines de traitement de données ou d'autres applications).
 
 ---
 
@@ -77,7 +79,9 @@ OPENAI_API_KEY="votre-clé-API-ici"
 python app.py
 ```
 
-L'API sera disponible sur **`http://127.0.0.1:5000/analyze`**
+L'API sera disponible aux adresses suivantes :
+- **JSON + HTML :** `http://127.0.0.1:5000/analyze`
+- **JSON structuré :** `http://127.0.0.1:5000/analyze_json_return`
 
 ---
 
@@ -93,18 +97,39 @@ Power Automate doit envoyer une requête **POST** vers l'API Flask avec ce JSON 
 }
 ```
 
-### **Réponse de l'API (Exemple)**
+### **Réponses de l'API**
+
+#### **Option 1 : JSON avec HTML intégré (`/analyze`)**
 
 ```json
 {
   "HtmlResult": "<html>...</html>",
+  "isPlant": "1"
+}
+```
+
+| **Champ**    | **Description**                                  |
+|-------------|-----------------------------------------------|
+| `HtmlResult` | Contient le **code HTML** du diagnostic     |
+| `isPlant`    | `1` = C'est une plante, `0` = Ce n'est pas une plante |
+
+#### **Option 2 : JSON structuré (`/analyze_json_return`)**
+
+```json
+{
+  "status": "Bonne santé",
+  "diag": "La plante est en bon état avec aucun problème visible.",
+  "solution": "Maintenez un bon apport en lumière et en eau.",
   "isPlant": 1
 }
 ```
 
-| **Champ**    | **Description**                                       |
-| ------------ | ----------------------------------------------------- |
-| `HtmlResult` | Contient le **code HTML** du diagnostic               |
-| `isPlant`    | `1` = C'est une plante, `0` = Ce n'est pas une plante |
+| **Champ**    | **Description**                                    |
+|-------------|--------------------------------------------------|
+| `status`    | État de santé de la plante (`Bonne santé`, `Malade`, `Très malade`) |
+| `diag`      | Explication détaillée de l'état de la plante   |
+| `solution`  | Actions recommandées pour maintenir ou améliorer la santé de la plante |
+| `isPlant`   | `1` = C'est une plante, `0` = Ce n'est pas une plante  |
 
 ---
+

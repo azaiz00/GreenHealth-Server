@@ -86,7 +86,7 @@ def analyze():
 @app.route('/analyze_json_return', methods=['POST'])
 def analyze_json_return():
     """
-    Endpoint Flask pour analyser une image Base64 et retourner un HTML.
+    Endpoint Flask pour analyser une image Base64 et retourner un json.
     """
     try:
         # Récupérer les données JSON de la requête
