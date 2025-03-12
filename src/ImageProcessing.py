@@ -20,7 +20,6 @@ client = openai.OpenAI(api_key=OPENAI_API_KEY)
 model = "gpt-4o-mini"
 
 def analyze_plant_health(image_base64):
-    print("test")
     """
     Analyse une image de plante avec GPT-4o et retourne un diagnostic structuré.
     """

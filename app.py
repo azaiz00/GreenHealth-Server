@@ -83,18 +83,39 @@ def analyze():
         return jsonify({"error": "Erreur interne", "details": str(e)}), 500
 
 
-
-@app.route('/render', methods=['POST'])  # Changement d'URL pour plus de clarté
-def render_template_from_request():
-    """ Rend une template HTML en fonction de la requête POST """
-    data = request.json  # Récupération des données envoyées en JSON
-    template_name = data.get("template", "error_not_plant.html")  # Valeur par défaut
-    context = data.get("context", {})  # Dictionnaire contenant des variables pour la template
-
+@app.route('/analyze_json_return', methods=['POST'])
+def analyze_json_return():
+    """
+    Endpoint Flask pour analyser une image Base64 et retourner un json.
+    """
     try:
-        return render_template(template_name, **context)
-    except:
-        return "Template not found", 404
+        # Récupérer les données JSON de la requête
+        data = request.get_json()
+        if not data or "image_base64" not in data:
+            return jsonify({"error": "Requête invalide", "details": "L'image Base64 est requise"}), 400
 
+        image_base64 = data["image_base64"]
+
+        # Vérifier que le format Base64 est correct
+        index_base64 = image_base64.find("base64,")
+        if index_base64 == -1:
+            return jsonify({"error": "Format incorrect", "details": "Base64 mal formé"}), 400
+
+        # Extraire uniquement la partie encodée
+        image_base64.strip('"')
+        image_base64 = image_base64[index_base64 + len("base64,"):]
+
+        # Analyser l'image avec OpenAI
+        response , status_code = None,None
+        response, status_code = analyze_plant_health(image_base64)
+
+        # Retourner la réponse JSON avec le HTML nettoyé
+        if response!= None and status_code != None : 
+            return jsonify(response), status_code
+
+    except Exception as e:
+        return jsonify({"error": "Erreur interne", "details": str(e)}), 500
+    
+    
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
